@@ -9,11 +9,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'youTalk',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MainApp(),
+      home: const MainApp(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -44,7 +45,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main App'),
+        title: const Text('youTalk'),
       ),
       body: Center(
         child: Column(
@@ -52,26 +53,36 @@ class _MainAppState extends State<MainApp> {
           children: <Widget>[
             LabelledTextField.readable(
                 label: "Add Topic", controller: _controller),
-            OutlinedButton(
-              onPressed: _addItem,
-              child: const Text('Add Topic'),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 3),
+              child: OutlinedButton(
+                onPressed: _addItem,
+                child: const Text('Add Topic'),
+              ),
             ),
             ValueListenableBuilder<List<String>>(
               valueListenable: _itemListNotifier,
               builder: (context, itemList, _) {
-                return Dismissible(
-                  key: UniqueKey(), //probably not the best way to do this
-                  child: ItemContainer(info: itemList.lastOrNull ?? "No Info"),
-                  onDismissed: (direction) => {
-                    setState(() {
-                      List<String> _itemList = _itemListNotifier.value;
-                      _itemList.removeLast();
-                      _itemListNotifier.value = [
-                        ..._itemList,
-                      ];
-                    }),
-                  },
-                );
+                if (itemList.isNotEmpty) {
+                  return Dismissible(
+                    key: UniqueKey(),
+                    background: Container(color: Colors.red),
+                    child:
+                        ItemContainer(info: itemList.lastOrNull ?? "No Info"),
+                    onDismissed: (direction) => {
+                      setState(() {
+                        // ignore: no_leading_underscores_for_local_identifiers
+                        List<String> _itemList = _itemListNotifier.value;
+                        _itemList.removeLast();
+                        _itemListNotifier.value = [
+                          ..._itemList,
+                        ];
+                      }),
+                    },
+                  );
+                } else {
+                  return Container();
+                }
               },
             ),
             ValueListenableBuilder<List<String>>(
@@ -125,7 +136,7 @@ class ItemContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: Container(
           width: 500,
           height: 50,
