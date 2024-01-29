@@ -4,6 +4,48 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class ItemContainer extends StatelessWidget {
+  const ItemContainer({
+    super.key,
+    this.info,
+  });
+
+  final String? info;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 500,
+      height: 62.5,
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          //borderRadius: BorderRadius.all(Radius.circular(10)),
+          border: Border(
+            bottom: BorderSide(width: 0.5, color: Colors.black12),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(35, 0, 0, 0),
+              blurRadius: 0.5,
+              spreadRadius: 0.0,
+              offset: Offset(0.0, 4.0), // shadow direction: bottom right
+            ),
+            BoxShadow(
+              color: Colors.white,
+              blurRadius: 0.0,
+              spreadRadius: 0.0,
+              offset: Offset(0.0, 0.0),
+            )
+          ]),
+      child: Center(
+          child: Text(
+        info ?? "No Info",
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      )),
+    );
+  }
+}
+
 class LabelledTextField extends StatelessWidget {
   final String label;
   TextEditingController? controller;
@@ -100,32 +142,26 @@ Future<List<dynamic>> loadBets() async {
   return jsonData;
 }
 
-Future<List<String>> loadSearchTerms() async {
-  final String response = await rootBundle
-      .loadString('assets/jsons/bets.json'); //change to api or different json
-  final jsonData = await json.decode(response)['bets'];
-  List<String> searchTerms = [];
-  for (var bet in jsonData) {
-    searchTerms.add(bet['name']);
+Future<List<List<String>>> loadAccountdata() async {
+  final String response = await rootBundle.loadString('assets/account.json');
+  var jsonFile = json.decode(response);
+  final names = await jsonFile['stacknames'];
+  print(names);
+  List<List<String>> searchTerms = [];
+  for (String name in names) {
+    searchTerms.add(
+        [jsonFile['stacks'][name]['name'], jsonFile['stacks'][name]['desc']]);
+    print("Hello World");
   }
+  print(searchTerms);
   return searchTerms;
 }
 
-Future<List<dynamic>> loadBetData() async {
-  final String response =
-      await rootBundle.loadString('assets/jsons/betdetails.json');
+Future<List<String>> loadStackData(String name) async {
+  final String response = await rootBundle.loadString('assets/account.json');
   var jsonFile = json.decode(response);
-  List<dynamic> jsonData = [jsonFile['id']];
-  jsonData.add(jsonFile['title']);
-  jsonData.add(jsonFile['name']);
-  jsonData.add(jsonFile['date']);
-  jsonData.add(jsonFile['pool']);
-  jsonData.add(jsonFile['playersnum']);
-  jsonData.add(jsonFile['optionsnum']);
-  for (var option in jsonFile['options']) {
-    jsonData.add([option['name'], option['votes'], option['money']]);
-  }
-  jsonData.add(jsonFile['optionsnum']);
+  List<String> jsonData = [...(jsonFile["stacks"][name]["items"])];
+  print(jsonData);
   return jsonData;
 }
 

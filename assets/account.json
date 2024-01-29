@@ -1,0 +1,21 @@
+{
+    "stacknames":["stack1","stack2","stack3"],
+    "stacks":{
+        "stack1":{
+            "name":"stack1",
+            "description":"stack1 description",
+            "items":["item1","item2","item3"]
+        },
+        "stack2":{
+            "name":"stack2",
+            "description":"stack2 description",
+            "items":["item1","item2","item3"]
+        },
+        "stack3":{
+            "name":"stack3",
+            "description":"stack3 description",
+            "items":["item1","item2","item3"]
+        }
+    }
+
+}
