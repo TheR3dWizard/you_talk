@@ -41,12 +41,12 @@ class _HomePageStfulState extends State<HomePageStful> {
                   ),
                   TextButton(
                     onPressed: () {
-                      randomvar = -1 * randomvar;
+                      Navigator.of(context).pop();
                       setState(() {
+                        randomvar = -1 * randomvar;
                         createNewStack(
                             controllerName.text, controllerDescription.text);
                       });
-                      Navigator.of(context).pop();
                     },
                     child: const Text('Create'),
                   ),
@@ -76,6 +76,33 @@ class _HomePageStfulState extends State<HomePageStful> {
                     child: ListTile(
                       title: Text(snapshot.data![index][0]),
                       subtitle: Text(snapshot.data![index][1]),
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Delete Stack"),
+                                content: const Text(
+                                    "Are you sure you want to delete this stack?"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("Cancel")),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        setState(() {
+                                          removeStack(snapshot.data![index][0]);
+                                          randomvar = -1 * randomvar;
+                                        });
+                                      },
+                                      child: const Text("Delete"))
+                                ],
+                              );
+                            });
+                      },
                       onTap: () {
                         Navigator.push(
                           context,
@@ -83,14 +110,14 @@ class _HomePageStfulState extends State<HomePageStful> {
                             builder: (context) => FutureBuilder<List<String>>(
                               future: loadStackData(snapshot.data![index]
                                   [0]), // asynchronous function call
-                              builder: (context, snapshot2) {
-                                if (snapshot2.connectionState ==
+                              builder: (context, snapshot1) {
+                                if (snapshot1.connectionState ==
                                     ConnectionState.done) {
                                   // If the Future is complete, build the widget with the data
                                   print(
                                       "Title when stackPage is called: ${snapshot.data![index][0]}");
                                   return StackPage(
-                                    itemList: snapshot2.data,
+                                    itemList: snapshot1.data,
                                     title: snapshot.data![index][0],
                                   );
                                 } else {
@@ -111,160 +138,6 @@ class _HomePageStfulState extends State<HomePageStful> {
               return const CircularProgressIndicator();
             }
           }),
-    );
-  }
-}
-
-class HomePageOld extends StatelessWidget {
-  HomePageOld({super.key});
-
-  final TextEditingController controllerName = TextEditingController();
-  final TextEditingController controllerDescription = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('youTalk'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Create New Stack'),
-                content: NewStackDialog(
-                  controllerName: controllerName,
-                  controllerDescription: controllerDescription,
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      createNewStack(
-                          controllerName.text, controllerDescription.text);
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Create'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: FutureBuilder<List<List<String>>>(
-          future: loadAccountdata(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If the Future is complete, build the widget with the data
-              print("snapshot data: ${snapshot.data}");
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                      title: Card(
-                    child: ListTile(
-                      title: Text(snapshot.data![index][0]),
-                      subtitle: Text(snapshot.data![index][1]),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FutureBuilder<List<String>>(
-                              future: loadStackData(snapshot.data![index]
-                                  [0]), // asynchronous function call
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  // If the Future is complete, build the widget with the data
-                                  return StackPage(itemList: snapshot.data);
-                                } else {
-                                  // Otherwise, show a loading indicator or handle the loading state
-                                  return const CircularProgressIndicator();
-                                }
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ));
-                },
-              );
-            } else {
-              // Otherwise, show a loading indicator or handle the loading state
-              return const CircularProgressIndicator();
-            }
-          }),
-    );
-  }
-}
-
-class StackIntro extends StatelessWidget {
-  const StackIntro({super.key, required this.data});
-
-  final List<String> data;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FutureBuilder<List<String>>(
-              future: loadStackData(data[0]), // asynchronous function call
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If the Future is complete, build the widget with the data
-                  return StackPage(itemList: snapshot.data);
-                } else {
-                  // Otherwise, show a loading indicator or handle the loading state
-                  return const CircularProgressIndicator();
-                }
-              },
-            ),
-          ),
-        );
-      },
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              color: Colors.blue,
-            ),
-            constraints: const BoxConstraints(
-                minHeight: 50, minWidth: 50, maxWidth: 100, maxHeight: 100),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    data[0],
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(data[1]),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

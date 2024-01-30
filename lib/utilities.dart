@@ -177,6 +177,15 @@ void saveStackData(String name, List<String>? data) async {
   print("Provided Data is: $jsonFile");
 }
 
+void removeStack(String name) async {
+  final File file = await _localFile;
+  final String response = await file.readAsString();
+  var jsonFile = json.decode(response);
+  jsonFile["stacknames"].remove(name);
+  jsonFile["stacks"].remove(name);
+  writeJsonToFile(jsonFile);
+}
+
 Future<String> get _localPath async {
   final directory = await getApplicationDocumentsDirectory();
 
