@@ -10,6 +10,8 @@ class HomePageStful extends StatefulWidget {
 }
 
 class _HomePageStfulState extends State<HomePageStful> {
+  int randomvar = 1;
+
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
 
@@ -39,6 +41,7 @@ class _HomePageStfulState extends State<HomePageStful> {
                   ),
                   TextButton(
                     onPressed: () {
+                      randomvar = -1 * randomvar;
                       setState(() {
                         createNewStack(
                             controllerName.text, controllerDescription.text);
@@ -80,11 +83,16 @@ class _HomePageStfulState extends State<HomePageStful> {
                             builder: (context) => FutureBuilder<List<String>>(
                               future: loadStackData(snapshot.data![index]
                                   [0]), // asynchronous function call
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
+                              builder: (context, snapshot2) {
+                                if (snapshot2.connectionState ==
                                     ConnectionState.done) {
                                   // If the Future is complete, build the widget with the data
-                                  return StackPage(itemList: snapshot.data);
+                                  print(
+                                      "Title when stackPage is called: ${snapshot.data![index][0]}");
+                                  return StackPage(
+                                    itemList: snapshot2.data,
+                                    title: snapshot.data![index][0],
+                                  );
                                 } else {
                                   // Otherwise, show a loading indicator or handle the loading state
                                   return const CircularProgressIndicator();

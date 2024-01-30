@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:you_talk/utilities.dart';
 
 class StackPage extends StatefulWidget {
-  const StackPage({Key? key, this.itemList}) : super(key: key);
+  const StackPage({Key? key, this.itemList, this.title}) : super(key: key);
   final List<String>? itemList;
+  final String? title;
 
   @override
-  State<StackPage> createState() => StackPageState(itemList: itemList);
+  State<StackPage> createState() =>
+      StackPageState(itemList: itemList, title: title);
 }
 
 class StackPageState extends State<StackPage> {
   final TextEditingController _controller = TextEditingController();
   final ValueNotifier<List<String>> _itemListNotifier;
   List<String>? itemList;
+  String? title;
 
-  StackPageState({this.itemList})
+  StackPageState({this.itemList, this.title})
       : _itemListNotifier = ValueNotifier<List<String>>(itemList ?? []);
 
   @override
@@ -27,7 +30,11 @@ class StackPageState extends State<StackPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => saveStackData("stack1", _itemListNotifier.value),
+        onPressed: () => {
+          print("Title is $title"),
+          saveStackData(
+              title ?? "Just please dont be null", _itemListNotifier.value)
+        },
         child: const Icon(Icons.save),
       ),
       appBar: AppBar(

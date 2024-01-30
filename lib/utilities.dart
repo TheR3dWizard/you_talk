@@ -139,26 +139,28 @@ Future<List<List<String>>> loadAccountdata() async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
+  print("Read Data from loadAccountData is: $jsonFile");
   final names = await jsonFile['stacknames'];
   // print(jsonFile);
-  List<List<String>> searchTerms = [];
+  List<List<String>> stackData = [];
   for (String name in names) {
     // print("Name is $name");
     print('''jsonFile["stacks"]["$name"]["name"]''');
     print(jsonFile["stacks"]["$name"]["name"]);
-    searchTerms.add([
+    stackData.add([
       jsonFile["stacks"]["$name"]["name"],
       jsonFile["stacks"]["$name"]["description"]
     ]);
   }
-  print(searchTerms);
-  return searchTerms;
+  print(stackData);
+  return stackData;
 }
 
 Future<List<String>> loadStackData(String name) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
+  print("Read Data from loadStackData is: $jsonFile");
   List<String> jsonData = [...(jsonFile["stacks"][name]["items"])];
   print(jsonData);
   return jsonData;
@@ -186,11 +188,11 @@ Future<File> get _localFile async {
 
   File file = File('$path/account.json');
   if (!file.existsSync()) {
-    await file.create(recursive: true);
+    await file.create(exclusive: false);
+    String jsonString = await rootBundle.loadString('assets/account.json');
+    await file.writeAsString(jsonString);
   }
 
-  String jsonString = await rootBundle.loadString('assets/account.json');
-  await file.writeAsString(jsonString);
   return file;
 }
 
