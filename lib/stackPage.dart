@@ -26,6 +26,10 @@ class StackPageState extends State<StackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => saveStackData("stack1", _itemListNotifier.value),
+        child: const Icon(Icons.save),
+      ),
       appBar: AppBar(
         title: const Text('youTalk'),
       ),

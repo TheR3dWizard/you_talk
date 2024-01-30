@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:you_talk/utilities.dart';
 import 'package:you_talk/stackPage.dart';
 import 'package:you_talk/homepage.dart';
+import 'package:you_talk/homepagestful.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: const HomePage(),
+      home: const HomePageStful(),
       debugShowCheckedModeBanner: false,
     );
   }

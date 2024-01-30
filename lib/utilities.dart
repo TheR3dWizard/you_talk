@@ -1,8 +1,9 @@
 // ignore_for_file: must_be_immutable
-
+import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ItemContainer extends StatelessWidget {
   const ItemContainer({
@@ -134,37 +135,83 @@ class _BetState extends State<Bet> {
 
 // Custom Functions
 
-//Function to load bet objects from json
-
-Future<List<dynamic>> loadBets() async {
-  final String response = await rootBundle.loadString('assets/jsons/bets.json');
-  final jsonData = await json.decode(response)['bets'];
-  return jsonData;
-}
-
 Future<List<List<String>>> loadAccountdata() async {
-  final String response = await rootBundle.loadString('assets/account.json');
+  final File file = await _localFile;
+  final String response = await file.readAsString();
   var jsonFile = json.decode(response);
   final names = await jsonFile['stacknames'];
-  print(names);
+  // print(jsonFile);
   List<List<String>> searchTerms = [];
   for (String name in names) {
-    searchTerms.add(
-        [jsonFile['stacks'][name]['name'], jsonFile['stacks'][name]['desc']]);
-    print("Hello World");
+    // print("Name is $name");
+    print('''jsonFile["stacks"]["$name"]["name"]''');
+    print(jsonFile["stacks"]["$name"]["name"]);
+    searchTerms.add([
+      jsonFile["stacks"]["$name"]["name"],
+      jsonFile["stacks"]["$name"]["description"]
+    ]);
   }
   print(searchTerms);
   return searchTerms;
 }
 
 Future<List<String>> loadStackData(String name) async {
-  final String response = await rootBundle.loadString('assets/account.json');
+  final File file = await _localFile;
+  final String response = await file.readAsString();
   var jsonFile = json.decode(response);
   List<String> jsonData = [...(jsonFile["stacks"][name]["items"])];
   print(jsonData);
   return jsonData;
 }
 
-String font() {
-  return 'Poppins';
+void saveStackData(String name, List<String>? data) async {
+  final File file = await _localFile;
+  final String response = await file.readAsString();
+  var jsonFile = json.decode(response);
+  print("Current Itemlist is ${jsonFile["stacks"][name]["items"]}");
+  print("Provided List is: $data");
+  jsonFile["stacks"][name]["items"] = data;
+  writeJsonToFile(jsonFile);
+  print("Provided Data is: $jsonFile");
+}
+
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+
+  return directory.path;
+}
+
+Future<File> get _localFile async {
+  final path = await _localPath;
+
+  File file = File('$path/account.json');
+  if (!file.existsSync()) {
+    await file.create(recursive: true);
+  }
+
+  String jsonString = await rootBundle.loadString('assets/account.json');
+  await file.writeAsString(jsonString);
+  return file;
+}
+
+void writeJsonToFile(Map<String, dynamic> data) async {
+  final file = await _localFile;
+
+  // Convert the data to a JSON string
+  String jsonString = json.encode(data);
+
+  // Write the JSON string to the file
+  await file.writeAsString(jsonString);
+
+  print("File Data: ${await file.readAsString()}");
+}
+
+void createNewStack(String name, String description) async {
+  final File file = await _localFile;
+  final String response = await file.readAsString();
+  var jsonFile = json.decode(response);
+  jsonFile["stacknames"].add(name);
+  jsonFile["stacks"]
+      [name] = {"name": name, "description": description, "items": []};
+  writeJsonToFile(jsonFile);
 }
