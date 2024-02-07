@@ -1,9 +1,6 @@
-// ignore_for_file: no_logic_in_create_state
+// ignore_for_file: no_logic_in_create_state, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:you_talk/utilities.dart';
-import 'package:you_talk/stackPage.dart';
-import 'package:you_talk/homepage.dart';
 import 'package:you_talk/homepagestful.dart';
 
 void main() {

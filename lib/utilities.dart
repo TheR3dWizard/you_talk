@@ -152,7 +152,7 @@ Future<List<List<String>>> loadAccountdata() async {
       jsonFile["stacks"]["$name"]["description"]
     ]);
   }
-  print(stackData);
+  print("StackData being returned is: $stackData");
   return stackData;
 }
 
@@ -162,6 +162,16 @@ Future<List<String>> loadStackData(String name) async {
   var jsonFile = json.decode(response);
   print("Read Data from loadStackData is: $jsonFile");
   List<String> jsonData = [...(jsonFile["stacks"][name]["items"])];
+  print(jsonData);
+  return jsonData;
+}
+
+Future<List<String>> loadStackNames() async {
+  final File file = await _localFile;
+  final String response = await file.readAsString();
+  var jsonFile = json.decode(response);
+  print("Read Data from loadStackData is: $jsonFile");
+  List<String> jsonData = [...(jsonFile["stacknames"])];
   print(jsonData);
   return jsonData;
 }

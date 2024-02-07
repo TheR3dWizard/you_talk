@@ -26,32 +26,7 @@ class _HomePageStfulState extends State<HomePageStful> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Create New Stack'),
-                content: NewStackDialog(
-                  controllerName: controllerName,
-                  controllerDescription: controllerDescription,
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      setState(() {
-                        randomvar = -1 * randomvar;
-                        createNewStack(
-                            controllerName.text, controllerDescription.text);
-                      });
-                    },
-                    child: const Text('Create'),
-                  ),
-                ],
-              );
+              return stackCreator();
             },
           );
         },
@@ -93,10 +68,9 @@ class _HomePageStfulState extends State<HomePageStful> {
                                   TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
-                                        setState(() {
-                                          removeStack(snapshot.data![index][0]);
-                                          randomvar = -1 * randomvar;
-                                        });
+                                        removeStack(snapshot.data![index][0]);
+                                        randomvar = -1 * randomvar;
+                                        setState(() {});
                                       },
                                       child: const Text("Delete"))
                                 ],
@@ -139,6 +113,59 @@ class _HomePageStfulState extends State<HomePageStful> {
             }
           }),
     );
+  }
+
+  FutureBuilder<List<String>> stackCreator() {
+    return FutureBuilder<List<String>>(
+        future: loadStackNames(),
+        builder: (context, snapshot) {
+          return AlertDialog(
+            title: const Text('Create New Stack'),
+            content: NewStackDialog(
+              controllerName: controllerName,
+              controllerDescription: controllerDescription,
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  randomvar = -1 * randomvar;
+                  if (snapshot.data?.contains(controllerName.text) == false) {
+                    createNewStack(
+                        controllerName.text, controllerDescription.text);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Stack Exists"),
+                          content: const Text(
+                              "A stack with this name already exists. Please choose a different name."),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  setState(() {});
+                },
+                child: const Text('Create'),
+              ),
+            ],
+          );
+        });
   }
 }
 
