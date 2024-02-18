@@ -22,17 +22,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-// home: FutureBuilder<List<String>>(
-//         future: loadStackData(), // asynchronous function call
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.done) {
-//             // If the Future is complete, build the widget with the data
-//             return StackPage(itemList: snapshot.data);
-//           } else {
-//             // Otherwise, show a loading indicator or handle the loading state
-//             return const CircularProgressIndicator();
-//           }
-//         },
-//       ),

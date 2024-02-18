@@ -136,16 +136,20 @@ class _BetState extends State<Bet> {
 }
 
 class AudioPage extends StatefulWidget {
-  AudioPage({Key? key}) : super(key: key);
+  AudioPage({Key? key, required this.wordList}) : super(key: key);
+
+  List<String> wordList;
 
   @override
-  _AudioPageState createState() => _AudioPageState();
+  _AudioPageState createState() => _AudioPageState(wordList: wordList);
 }
 
 class _AudioPageState extends State<AudioPage> {
   SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
-  String _lastWords = '';
+  List<String> wordList;
+
+  _AudioPageState({required this.wordList});
 
   @override
   void initState() {
@@ -178,7 +182,7 @@ class _AudioPageState extends State<AudioPage> {
   /// the platform returns recognized words.
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
-      _lastWords = result.recognizedWords;
+      wordList.add(result.recognizedWords);
     });
   }
 
@@ -188,20 +192,13 @@ class _AudioPageState extends State<AudioPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Recognized words:',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ),
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Text(
                 // If listening is active show the recognized words
                 _speechToText.isListening
-                    ? '$_lastWords'
+                    ? wordList.last
                     // If listening isn't active but could be tell the user
                     // how to start it, otherwise indicate that speech
                     // recognition is not yet ready or not supported on

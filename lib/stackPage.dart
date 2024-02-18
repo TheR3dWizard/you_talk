@@ -17,6 +17,7 @@ class StackPageState extends State<StackPage> {
   final ValueNotifier<List<String>> _itemListNotifier;
   List<String>? itemList;
   String? title;
+  List<String> audioList = [];
 
   StackPageState({this.itemList, this.title})
       : _itemListNotifier = ValueNotifier<List<String>>(itemList ?? []);
@@ -49,8 +50,10 @@ class StackPageState extends State<StackPage> {
               ),
             ),
             ConstrainedBox(
-              constraints: BoxConstraints.tight(const Size(500, 150)),
-              child: AudioPage(),
+              constraints: BoxConstraints.tight(const Size(500, 100)),
+              child: AudioPage(
+                wordList: audioList,
+              ),
             ),
             ValueListenableBuilder<List<String>>(
               valueListenable: _itemListNotifier,
