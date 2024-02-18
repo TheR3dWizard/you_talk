@@ -15,6 +15,15 @@ class _HomePageStfulState extends State<HomePageStful> {
   final TextEditingController controllerName = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
 
+  late Future<List<List<String>>>? _stackData;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the future in the initState
+    _stackData = loadAccountdata();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +42,7 @@ class _HomePageStfulState extends State<HomePageStful> {
         child: const Icon(Icons.add),
       ),
       body: FutureBuilder<List<List<String>>>(
-          future: loadAccountdata(),
+          future: _stackData,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               // If the Future is complete, build the widget with the data
@@ -68,9 +77,10 @@ class _HomePageStfulState extends State<HomePageStful> {
                                   TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
-                                        removeStack(snapshot.data![index][0]);
-                                        randomvar = -1 * randomvar;
-                                        setState(() {});
+
+                                        setState(() {
+                                          removeStack(snapshot.data![index][0]);
+                                        });
                                       },
                                       child: const Text("Delete"))
                                 ],
@@ -137,8 +147,10 @@ class _HomePageStfulState extends State<HomePageStful> {
                   Navigator.of(context).pop();
                   randomvar = -1 * randomvar;
                   if (snapshot.data?.contains(controllerName.text) == false) {
-                    createNewStack(
-                        controllerName.text, controllerDescription.text);
+                    setState(() {
+                      createNewStack(
+                          controllerName.text, controllerDescription.text);
+                    });
                   } else {
                     showDialog(
                       context: context,
@@ -159,7 +171,6 @@ class _HomePageStfulState extends State<HomePageStful> {
                       },
                     );
                   }
-                  setState(() {});
                 },
                 child: const Text('Create'),
               ),

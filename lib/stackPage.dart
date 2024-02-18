@@ -48,6 +48,10 @@ class StackPageState extends State<StackPage> {
                 child: const Text('Add Topic'),
               ),
             ),
+            ConstrainedBox(
+              constraints: BoxConstraints.tight(const Size(500, 150)),
+              child: AudioPage(),
+            ),
             ValueListenableBuilder<List<String>>(
               valueListenable: _itemListNotifier,
               builder: (context, itemList, _) {
