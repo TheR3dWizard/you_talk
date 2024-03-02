@@ -3,24 +3,24 @@ import 'package:you_talk/utilities.dart';
 import 'package:flutter/services.dart';
 import 'package:you_talk/audioPage.dart';
 
-class StackPage extends StatefulWidget {
-  const StackPage({Key? key, this.itemList, this.title}) : super(key: key);
+class QueuePage extends StatefulWidget {
+  const QueuePage({Key? key, this.itemList, this.title}) : super(key: key);
   final List<String>? itemList;
   final String? title;
 
   @override
-  State<StackPage> createState() =>
-      StackPageState(itemList: itemList, title: title);
+  State<QueuePage> createState() =>
+      QueuePageState(itemList: itemList, title: title);
 }
 
-class StackPageState extends State<StackPage> {
+class QueuePageState extends State<QueuePage> {
   final TextEditingController _controller = TextEditingController();
   final ValueNotifier<List<String>> _itemListNotifier;
   List<String>? itemList;
   String? title;
   List<String> audioList = [];
 
-  StackPageState({this.itemList, this.title})
+  QueuePageState({this.itemList, this.title})
       : _itemListNotifier = ValueNotifier<List<String>>(itemList ?? []);
 
   @override
@@ -64,12 +64,12 @@ class StackPageState extends State<StackPage> {
                     key: UniqueKey(),
                     background: Container(color: Colors.red),
                     child:
-                        ItemContainer(info: itemList.lastOrNull ?? "No Info"),
+                        ItemContainer(info: itemList.firstOrNull ?? "No Info"),
                     onDismissed: (direction) => {
                       setState(() {
                         // ignore: no_leading_underscores_for_local_identifiers
                         List<String> _itemList = _itemListNotifier.value;
-                        _itemList.removeLast();
+                        _itemList.removeAt(0);
                         _itemListNotifier.value = [
                           ..._itemList,
                         ];
@@ -94,7 +94,7 @@ class StackPageState extends State<StackPage> {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             return ItemContainer(
-                                info: itemList.reversed.toList()[index + 1]);
+                                info: itemList.toList()[index + 1]);
                           },
                           childCount: itemList.length - 1,
                         ),

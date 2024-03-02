@@ -1,9 +1,16 @@
 {
-    "stacknames":["Example Stack"],
+    "stacknames":["Example Stack","Example Queue"],
     "stacks":{
         "Example Stack":{
+            "type":"Stack",
             "name":"Example Stack",
             "description":"Just an Example Stack",
+            "items":["item1","item2","item3"]
+        },
+        "Example Queue":{
+            "type":"Queue",
+            "name":"Example Queue",
+            "description":"Just an Example Queue",
             "items":["item1","item2","item3"]
         }
     }

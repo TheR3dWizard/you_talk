@@ -4,8 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'dart:async';
 
 class ItemContainer extends StatelessWidget {
   const ItemContainer({
@@ -92,155 +91,27 @@ class LabelledTextField extends StatelessWidget {
   }
 }
 
-class Bet extends StatefulWidget {
-  final String info;
-  const Bet({super.key, required this.info});
-
-  @override
-  State<Bet> createState() => _BetState(info: info);
-}
-
-class _BetState extends State<Bet> {
-  String info;
-
-  _BetState({required this.info});
-  //TODO add on pressed function
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 2),
-        child: Container(
-          width: 500,
-          height: 50,
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromARGB(100, 0, 0, 0),
-                  blurRadius: 4.0,
-                  spreadRadius: 0.0,
-                  offset: Offset(0.0, 4.0), // shadow direction: bottom right
-                ),
-                BoxShadow(
-                  color: Colors.white,
-                  blurRadius: 0.0,
-                  spreadRadius: 0.0,
-                  offset: Offset(0.0, 0.0),
-                )
-              ]),
-          child: Text(info),
-        ));
-  }
-}
-
-class AudioPage extends StatefulWidget {
-  AudioPage({Key? key, required this.wordList}) : super(key: key);
-
-  List<String> wordList;
-
-  @override
-  _AudioPageState createState() => _AudioPageState(wordList: wordList);
-}
-
-class _AudioPageState extends State<AudioPage> {
-  SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
-  List<String> wordList;
-
-  _AudioPageState({required this.wordList});
-
-  @override
-  void initState() {
-    super.initState();
-    _initSpeech();
-  }
-
-  /// This has to happen only once per app
-  void _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize();
-    setState(() {});
-  }
-
-  /// Each time to start a speech recognition session
-  void _startListening() async {
-    await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {});
-  }
-
-  /// Manually stop the active speech recognition session
-  /// Note that there are also timeouts that each platform enforces
-  /// and the SpeechToText plugin supports setting timeouts on the
-  /// listen method.
-  void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {});
-  }
-
-  /// This is the callback that the SpeechToText plugin calls when
-  /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      wordList.add(result.recognizedWords);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                // If listening is active show the recognized words
-                _speechToText.isListening
-                    ? wordList.last
-                    // If listening isn't active but could be tell the user
-                    // how to start it, otherwise indicate that speech
-                    // recognition is not yet ready or not supported on
-                    // the target device
-                    : _speechEnabled
-                        ? 'Tap the microphone to start listening...'
-                        : 'Speech not available',
-              ),
-            ),
-          ),
-          OutlinedButton(
-              onPressed: _speechToText.isNotListening
-                  ? _startListening
-                  : _stopListening,
-              child: Icon(
-                  _speechToText.isNotListening ? Icons.mic_off : Icons.mic)),
-        ],
-      ),
-    );
-  }
-}
-
 // Custom Functions
 
 Future<List<List<String>>> loadAccountdata() async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
-  print("Read Data from loadAccountData is: $jsonFile");
+  //print("Read Data from loadAccountData is: $jsonFile");
   final names = await jsonFile['stacknames'];
-  // print(jsonFile);
+  // //print(jsonFile);
   List<List<String>> stackData = [];
   for (String name in names) {
-    // print("Name is $name");
-    print('''jsonFile["stacks"]["$name"]["name"]''');
-    print(jsonFile["stacks"]["$name"]["name"]);
+    // //print("Name is $name");
+    //print('''jsonFile["stacks"]["$name"]["name"]''');
+    //print(jsonFile["stacks"]["$name"]["name"]);
     stackData.add([
       jsonFile["stacks"]["$name"]["name"],
-      jsonFile["stacks"]["$name"]["description"]
+      jsonFile["stacks"]["$name"]["description"],
+      jsonFile["stacks"]["$name"]["type"]
     ]);
   }
-  print("StackData being returned is: $stackData");
+  //print("StackData being returned is: $stackData");
   return stackData;
 }
 
@@ -248,9 +119,9 @@ Future<List<String>> loadStackData(String name) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
-  print("Read Data from loadStackData is: $jsonFile");
+  //print("Read Data from loadStackData is: $jsonFile");
   List<String> jsonData = [...(jsonFile["stacks"][name]["items"])];
-  print(jsonData);
+  //print(jsonData);
   return jsonData;
 }
 
@@ -258,9 +129,9 @@ Future<List<String>> loadStackNames() async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
-  print("Read Data from loadStackData is: $jsonFile");
+  //print("Read Data from loadStackData is: $jsonFile");
   List<String> jsonData = [...(jsonFile["stacknames"])];
-  print(jsonData);
+  //print(jsonData);
   return jsonData;
 }
 
@@ -268,11 +139,11 @@ void saveStackData(String name, List<String>? data) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
-  print("Current Itemlist is ${jsonFile["stacks"][name]["items"]}");
-  print("Provided List is: $data");
+  //print("Current Itemlist is ${jsonFile["stacks"][name]["items"]}");
+  //print("Provided List is: $data");
   jsonFile["stacks"][name]["items"] = data;
   writeJsonToFile(jsonFile);
-  print("Provided Data is: $jsonFile");
+  //print("Provided Data is: $jsonFile");
 }
 
 void removeStack(String name) async {
@@ -312,7 +183,7 @@ void writeJsonToFile(Map<String, dynamic> data) async {
   // Write the JSON string to the file
   await file.writeAsString(jsonString);
 
-  print("File Data: ${await file.readAsString()}");
+  //print("File Data: ${await file.readAsString()}");
 }
 
 void createNewStack(String name, String description) async {
