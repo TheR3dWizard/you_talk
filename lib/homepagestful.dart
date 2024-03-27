@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:you_talk/stackQueuePage.dart';
 import 'package:you_talk/utilities.dart';
 import 'package:you_talk/stackPage.dart';
 import 'package:you_talk/queuePage.dart';
+import 'package:you_talk/stackQueuePage.dart';
 
 class HomePageStful extends StatefulWidget {
   const HomePageStful({super.key});
@@ -90,57 +92,29 @@ class _HomePageStfulState extends State<HomePageStful> {
                             });
                       },
                       onTap: () {
-                        if (snapshot.data![index][2] == "Stack") {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FutureBuilder<List<String>>(
-                                future: loadStackData(snapshot.data![index]
-                                    [0]), // asynchronous function call
-                                builder: (context, snapshot1) {
-                                  if (snapshot1.connectionState ==
-                                      ConnectionState.done) {
-                                    // If the Future is complete, build the widget with the data
-                                    print(
-                                        "Title when stackPage is called: ${snapshot.data![index][0]}");
-                                    return StackPage(
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FutureBuilder<List<String>>(
+                              future: loadStackData(snapshot.data![index]
+                                  [0]), // asynchronous function call
+                              builder: (context, snapshot1) {
+                                if (snapshot1.connectionState ==
+                                    ConnectionState.done) {
+                                  // If the Future is complete, build the widget with the data
+                                  return StackQueuePage(
                                       itemList: snapshot1.data,
                                       title: snapshot.data![index][0],
-                                    );
-                                  } else {
-                                    // Otherwise, show a loading indicator or handle the loading state
-                                    return const CircularProgressIndicator();
-                                  }
-                                },
-                              ),
+                                      isStack:
+                                          snapshot.data![index][2] == "Stack");
+                                } else {
+                                  // Otherwise, show a loading indicator or handle the loading state
+                                  return const CircularProgressIndicator();
+                                }
+                              },
                             ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FutureBuilder<List<String>>(
-                                future: loadStackData(snapshot.data![index]
-                                    [0]), // asynchronous function call
-                                builder: (context, snapshot1) {
-                                  if (snapshot1.connectionState ==
-                                      ConnectionState.done) {
-                                    // If the Future is complete, build the widget with the data
-                                    print(
-                                        "Title when stackPage is called: ${snapshot.data![index][0]}");
-                                    return QueuePage(
-                                      itemList: snapshot1.data,
-                                      title: snapshot.data![index][0],
-                                    );
-                                  } else {
-                                    // Otherwise, show a loading indicator or handle the loading state
-                                    return const CircularProgressIndicator();
-                                  }
-                                },
-                              ),
-                            ),
-                          );
-                        }
+                          ),
+                        );
                       },
                     ),
                   ));
@@ -178,7 +152,9 @@ class _HomePageStfulState extends State<HomePageStful> {
                   if (snapshot.data?.contains(controllerName.text) == false) {
                     setState(() {
                       createNewStack(
-                          controllerName.text, controllerDescription.text);
+                          controllerName.text,
+                          controllerDescription.text,
+                          "Stack"); //TODO: add logic to choose type
                     });
                   } else {
                     showDialog(

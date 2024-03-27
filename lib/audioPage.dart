@@ -26,7 +26,7 @@ class _AudioPageState extends State<AudioPage> {
   void initState() {
     super.initState();
     _initSpeech();
-    _startListening();
+    //_startListening();
   }
 
   /// This has to happen only once per app
@@ -40,12 +40,10 @@ class _AudioPageState extends State<AudioPage> {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       await _speechToText.listen(
         onResult: _onSpeechResult,
-        listenFor: const Duration(seconds: 9),
+        listenFor: const Duration(seconds: 5),
       );
       print("Value of _stop is $_stop");
-      if (_stop) {
-        timer.cancel();
-      }
+      if (_stop) timer.cancel();
     });
     setState(() {});
   }
@@ -55,8 +53,8 @@ class _AudioPageState extends State<AudioPage> {
   /// and the SpeechToText plugin supports setting timeouts on the
   /// listen method.
   void _stopListening() async {
-    await _speechToText.stop();
     _stop = true;
+    await _speechToText.stop();
     setState(() {});
   }
 
@@ -64,7 +62,10 @@ class _AudioPageState extends State<AudioPage> {
   /// the platform returns recognized words.
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
-      if (result.finalResult) wordList.add(result.recognizedWords);
+      if (result.finalResult) {
+        wordList.add(result.recognizedWords);
+      }
+      _stopListening();
     });
     print(wordList);
   }

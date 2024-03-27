@@ -186,12 +186,16 @@ void writeJsonToFile(Map<String, dynamic> data) async {
   //print("File Data: ${await file.readAsString()}");
 }
 
-void createNewStack(String name, String description) async {
+void createNewStack(String name, String description, String type) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
   jsonFile["stacknames"].add(name);
-  jsonFile["stacks"]
-      [name] = {"name": name, "description": description, "items": []};
+  jsonFile["stacks"][name] = {
+    "name": name,
+    "description": description,
+    "items": [],
+    "type": type
+  };
   writeJsonToFile(jsonFile);
 }
