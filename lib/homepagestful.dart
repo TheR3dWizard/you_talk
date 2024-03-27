@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:you_talk/stackQueuePage.dart';
 import 'package:you_talk/utilities.dart';
-import 'package:you_talk/stackPage.dart';
-import 'package:you_talk/queuePage.dart';
-import 'package:you_talk/stackQueuePage.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class HomePageStful extends StatefulWidget {
   const HomePageStful({super.key});
@@ -14,11 +12,6 @@ class HomePageStful extends StatefulWidget {
 
 class _HomePageStfulState extends State<HomePageStful> {
   int randomvar = 1;
-
-  final TextEditingController controllerName = TextEditingController();
-  final TextEditingController controllerDescription = TextEditingController();
-
-  late Future<List<List<String>>>? _stackData;
 
   @override
   void initState() {
@@ -132,11 +125,18 @@ class _HomePageStfulState extends State<HomePageStful> {
     return FutureBuilder<List<String>>(
         future: loadStackNames(),
         builder: (context, snapshot) {
+          final TextEditingController controllerName = TextEditingController();
+          final TextEditingController controllerDescription =
+              TextEditingController();
+          final ValueNotifier<String> typeNotifier =
+              ValueNotifier<String>('Stack');
+          String type = 'Stack';
           return AlertDialog(
-            title: const Text('Create New Stack'),
+            title: const Text('Create New Talk Object'),
             content: NewStackDialog(
               controllerName: controllerName,
               controllerDescription: controllerDescription,
+              typeNotifier: typeNotifier,
             ),
             actions: <Widget>[
               TextButton(
@@ -150,10 +150,8 @@ class _HomePageStfulState extends State<HomePageStful> {
                   Navigator.of(context).pop();
                   if (snapshot.data?.contains(controllerName.text) == false) {
                     await createNewStack(controllerName.text,
-                        controllerDescription.text, "Stack");
-                    setState(() {
-                      //TODO: add logic to choose type
-                    });
+                        controllerDescription.text, typeNotifier.value);
+                    setState(() {});
                   } else {
                     showDialog(
                       context: context,
@@ -187,20 +185,39 @@ class NewStackDialog extends StatelessWidget {
   const NewStackDialog(
       {super.key,
       required this.controllerName,
-      required this.controllerDescription});
+      required this.controllerDescription,
+      required this.typeNotifier});
 
   final TextEditingController controllerName;
   final TextEditingController controllerDescription;
+  final ValueNotifier<String> typeNotifier;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.tight(const Size(300, 300)),
+      constraints: BoxConstraints.tight(const Size(300, 164)),
       child: Column(
         children: [
           LabelledTextField.readable(label: "Name", controller: controllerName),
           LabelledTextField.readable(
               label: "Description", controller: controllerDescription),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+            child: ToggleSwitch(
+              initialLabelIndex: 0,
+              totalSwitches: 2,
+              labels: const ['Stack', 'Queue'],
+              activeBgColor: [Colors.redAccent],
+              inactiveBgColor: Colors.grey,
+              onToggle: (index) {
+                if (index == 0) {
+                  typeNotifier.value = "Stack";
+                } else {
+                  typeNotifier.value = "Queue";
+                }
+              },
+            ),
+          )
         ],
       ),
     );

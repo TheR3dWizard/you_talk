@@ -74,9 +74,10 @@ class LabelledTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
       child: TextField(
         decoration: InputDecoration(
+          constraints: BoxConstraints.tight(const Size(300, 50)),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             gapPadding: 5.0,
