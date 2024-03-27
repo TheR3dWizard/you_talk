@@ -146,7 +146,7 @@ void saveStackData(String name, List<String>? data) async {
   //print("Provided Data is: $jsonFile");
 }
 
-void removeStack(String name) async {
+Future<void> removeStack(String name) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
@@ -186,7 +186,8 @@ void writeJsonToFile(Map<String, dynamic> data) async {
   //print("File Data: ${await file.readAsString()}");
 }
 
-void createNewStack(String name, String description, String type) async {
+Future<void> createNewStack(
+    String name, String description, String type) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);

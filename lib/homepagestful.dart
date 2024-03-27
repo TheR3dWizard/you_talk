@@ -24,7 +24,7 @@ class _HomePageStfulState extends State<HomePageStful> {
   void initState() {
     super.initState();
     // Initialize the future in the initState
-    _stackData = loadAccountdata();
+    //_stackData = loadAccountdata();
   }
 
   @override
@@ -45,7 +45,7 @@ class _HomePageStfulState extends State<HomePageStful> {
         child: const Icon(Icons.add),
       ),
       body: FutureBuilder<List<List<String>>>(
-          future: _stackData,
+          future: loadAccountdata(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               // If the Future is complete, build the widget with the data
@@ -79,12 +79,12 @@ class _HomePageStfulState extends State<HomePageStful> {
                                       },
                                       child: const Text("Cancel")),
                                   TextButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         Navigator.of(context).pop();
+                                        await removeStack(
+                                            snapshot.data![index][0]);
 
-                                        setState(() {
-                                          removeStack(snapshot.data![index][0]);
-                                        });
+                                        setState(() {});
                                       },
                                       child: const Text("Delete"))
                                 ],
@@ -146,15 +146,13 @@ class _HomePageStfulState extends State<HomePageStful> {
                 child: const Text('Cancel'),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.of(context).pop();
-                  randomvar = -1 * randomvar;
                   if (snapshot.data?.contains(controllerName.text) == false) {
+                    await createNewStack(controllerName.text,
+                        controllerDescription.text, "Stack");
                     setState(() {
-                      createNewStack(
-                          controllerName.text,
-                          controllerDescription.text,
-                          "Stack"); //TODO: add logic to choose type
+                      //TODO: add logic to choose type
                     });
                   } else {
                     showDialog(
