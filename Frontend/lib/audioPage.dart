@@ -8,19 +8,21 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
 class AudioPage extends StatefulWidget {
-  AudioPage({Key? key,required this.list}) : super(key: key);
+  AudioPage({Key? key, required this.list, required this.onNewList}) : super(key: key);
+
 
   List<String> list = [];
+  final void Function(List<String>) onNewList;
 
   @override
-  _AudioPageState createState() => _AudioPageState(list: this.list);
+  _AudioPageState createState() => _AudioPageState(list: this.list, onNewList: this.onNewList);
 }
 
 class _AudioPageState extends State<AudioPage> {
   
-  _AudioPageState({required this.list});
+  _AudioPageState({required this.list,required this.onNewList});
   List<String> list = [];
-
+  final void Function(List<String>) onNewList;
   final record = AudioRecorder();
 
   @override
@@ -34,7 +36,9 @@ class _AudioPageState extends State<AudioPage> {
     if (_isRecording) {
       await record.stop();
       await uploadAudio();
-      await getList();
+      list = await getList();
+      onNewList(list);
+      print("List is $list");
     } else {
       _startListening();
     }

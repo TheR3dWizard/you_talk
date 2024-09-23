@@ -33,6 +33,17 @@ class StackQueuePageState extends State<StackQueuePage> {
     super.dispose();
   }
 
+  void onNewList(List<String> newList) {
+    setState(() {
+      itemList = newList;
+      _itemListNotifier.value = newList;
+    });
+    saveStackData(title ?? "Just please dont be null",
+                            _itemListNotifier.value);
+    print("New List is $newList");
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +69,7 @@ class StackQueuePageState extends State<StackQueuePage> {
               constraints: BoxConstraints.tight(const Size(500, 100)),
               child: AudioPage(
                 list: itemList ?? [],
+                onNewList: onNewList,
               ),
             ),
             ValueListenableBuilder<List<String>>(

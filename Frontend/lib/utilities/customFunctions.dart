@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
-
+import 'package:http/http.dart' as http;
 
 Future<List<List<String>>> loadAccountdata() async {
   final File file = await _localFile;
@@ -114,11 +113,21 @@ Future<void> createNewStack(    String name, String description, String type) as
 }
 
 
+String baseurl = "";
+String uploadurl = "";
+String downloadurl = "";
+
 Future<void> uploadAudio() async {
-  
+  final path = await getApplicationDocumentsDirectory().then((value) => value.path);
+  final File file = File('$path/myFile.m4a');
+  final bytes = await file.readAsBytes();
+  print("Uploading Audio");
+  // final response = await http.post(Uri.parse(baseurl+uploadurl), body: bytes);
+  //print(response.body);
 }
 
 Future<List<String>> getList() async{
-
-  return [];
+  // final response = await http.get(Uri.parse(baseurl+downloadurl));
+  print("Getting List");
+  return ["Item1","Item2","Item3","Item4","Yooooo works!!!"];
 }
