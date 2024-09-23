@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:you_talk/stackQueuePage.dart';
-import 'package:you_talk/utilities.dart';
+import 'package:you_talk/utilities/customWidgets.dart';
+import 'package:you_talk/utilities/customFunctions.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class HomePageStful extends StatefulWidget {

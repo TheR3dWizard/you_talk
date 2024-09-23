@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:you_talk/utilities.dart';
+import 'package:you_talk/utilities/customWidgets.dart';
+import 'package:you_talk/utilities/customFunctions.dart';
 import 'package:flutter/services.dart';
 import 'package:you_talk/audioPage.dart';
 
@@ -53,12 +54,12 @@ class StackQueuePageState extends State<StackQueuePage> {
                 child: const Text('Add Topic'),
               ),
             ),
-            // ConstrainedBox(
-            //   constraints: BoxConstraints.tight(const Size(500, 100)),
-            //   child: AudioPage(
-            //     wordList: audioList,
-            //   ),
-            // ),
+            ConstrainedBox(
+              constraints: BoxConstraints.tight(const Size(500, 100)),
+              child: AudioPage(
+                list: itemList ?? [],
+              ),
+            ),
             ValueListenableBuilder<List<String>>(
               valueListenable: _itemListNotifier,
               builder: (context, itemList, _) {
