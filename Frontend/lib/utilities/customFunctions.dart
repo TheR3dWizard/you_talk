@@ -98,7 +98,8 @@ void writeJsonToFile(Map<String, dynamic> data) async {
   //print("File Data: ${await file.readAsString()}");
 }
 
-Future<void> createNewStack(    String name, String description, String type) async {
+Future<void> createNewStack(
+    String name, String description, String type) async {
   final File file = await _localFile;
   final String response = await file.readAsString();
   var jsonFile = json.decode(response);
@@ -112,22 +113,22 @@ Future<void> createNewStack(    String name, String description, String type) as
   writeJsonToFile(jsonFile);
 }
 
-
 String baseurl = "";
 String uploadurl = "";
 String downloadurl = "";
 
 Future<void> uploadAudio() async {
-  final path = await getApplicationDocumentsDirectory().then((value) => value.path);
+  final path =
+      await getApplicationDocumentsDirectory().then((value) => value.path);
   final File file = File('$path/myFile.m4a');
   final bytes = await file.readAsBytes();
   print("Uploading Audio");
-  // final response = await http.post(Uri.parse(baseurl+uploadurl), body: bytes);
+  final response = await http.post(Uri.parse(baseurl + uploadurl), body: bytes);
   //print(response.body);
 }
 
-Future<List<String>> getList() async{
+Future<List<String>> getList() async {
   // final response = await http.get(Uri.parse(baseurl+downloadurl));
   print("Getting List");
-  return ["Item1","Item2","Item3","Item4","Yooooo works!!!"];
+  return ["Item1", "Item2", "Item3", "Item4", "Yooooo works!!!"];
 }
